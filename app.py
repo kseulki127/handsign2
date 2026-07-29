@@ -10,17 +10,22 @@ import av
 st.set_page_config(page_title="한국 수화 통역기", page_icon="🤟", layout="centered")
 
 st.title("🤟 한국 수화 실시간 통역기")
-st.write("카메라에 수화(1, 3, 6)를 보여주면 실시간으로 인식합니다.")
+st.write("카메라에 수화(1, 3, 6)를 보여주면 실시간으로 인식하고 번역해줍니다.")
 
 # Keras 모델 및 라벨 로드 (캐싱으로 로딩 속도 최적화)
 @st.cache_resource
 def load_keras_model():
-    model = tf.keras.models.load_model('model.h5', compile=False)
+model = tf.keras.models.load_model(MODEL_PATH, compile=False)
     
     labels = []
-    with open('labels.txt', 'r', encoding='utf-8') as f:
+    with open(LABELS_PATH, 'r', encoding='utf-8') as f:
         for line in f.readlines():
-            labels.append(line.strip())
+            cleaned_line = line.strip()
+            if cleaned_line:
+                # '0 1' -> '1', '1 3' -> '3' 과 같이 앞의 순번 숫자를 잘라내고 수화 의미만 가져옵니다.
+                parts = cleaned_line.split(' ', 1)
+                label_text = parts[1] if len(parts) > 1 else parts[0]
+                labels.append(label_text)
             
     return model, labels
 
