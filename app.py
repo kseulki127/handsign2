@@ -64,7 +64,7 @@ class SignLanguageProcessor(VideoProcessorBase):
         confidence_score = prediction[0][index]
         
         # 인식 결과 텍스트 생성
-        text = f"수화: {class_name} ({confidence_score * 100:.1f}%)"
+        text = f"번역: {class_name} (정확도: {int(confidence_score * 100)}%)"
         
         # 영상 위에 결과 자막 출력
         cv2.putText(img, text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 
